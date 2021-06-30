@@ -1,36 +1,50 @@
-const router = require("express").Router()
 const Workout = require("../models/workout.js")
 
-router.get("api/workout", (req, res) => {
-    Workout.find({})
-    .then(data => {
-        res.json(data)
-    })
-    .catch(err => {
-        res.status(400).json(err)
-    })
-})
+module.exports = function(app){
+    app.get('/api/workouts', async (req, res) => {
+        try {
+            const data = await Workout.aggregate([{
+                $set: {
+                    totalDuration: { $sum : "$exercises.duration"}
+                } 
+            }])
 
-router.post("/api/workout", ({ body}, res) => {
-    Workout.create(body)
-    .then (data => {
-        res.json(data)
-    })
-    .catch(err => {
-        res.status(400).json(err)
-    })
-})
+            res.send(data);
+        } catch(err){
+            res.json(err)
+        }
+    });
 
-router.put("/api/workout/:id", ({body, params}, res) => {
-    Workout.findByIdAndUpdate(
-    params.id,
-    {$push:{exercise:body}},
-    {new: true}
-    )
-    .then(data => res.json(data))
-    .catch(err => {
-        res.status(400).json(err)
+    app.post('/api/workouts', async (req, res) => {
+        try{
+            const workout = new Workout(req.body);
+            const data = await db.Workout.create(workout)
+            res.json(data);
+        } catch(err) {
+            res.json(err);
+        }
     })
-})
 
-module.exports = router
+    app.put('/api/workouts/:id', async (req, res) => {
+        try {
+            const data = await Workout.updateOne({_id: req.params.id},
+                {$push: {exercises: req.body}}
+            )
+            return res.json(data)
+        }
+        catch (err) {
+            console.log(err)
+            res.status(500).json({err})
+        }
+    });
+
+    app.get('/api/workouts/range', async (req, res) => {
+        const data = await Workout.aggregate([{
+            $set: {
+                totalDuration: { $sum : "$exercises.duration"}
+            } 
+        }])
+
+        res.json(data);
+    })
+}
