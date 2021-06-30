@@ -28,6 +28,6 @@ Please check out my repository at https://github.com/camjofindlay17 or feel free
 
 ## Installation
 
-Use the url (https://drive.google.com/file/d/1BU0iw0XgF5OAgzdwp2PiRoXbxp8JlSPX/view?usp=sharing) to view the web application.
+Use the url (https://agile-forest-90489.herokuapp.com/) to view the web application.
 
 Use the url (https://github.com/camjofindlay17/workout-tracker) to access the repository.
